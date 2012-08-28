@@ -1,0 +1,20 @@
+<h2>Projects for billing</h2>
+
+<table class="list">
+  <thead>
+    <tr>
+      <th>Project ID</th>
+      <th>Project Name</th>
+      <th>Billable Hours</th>
+    </tr>
+  </thead>
+  <tbody>
+<% @projects.each do |p| %>
+  <tr>
+    <td><%= p.project.id %></td>
+    <td><%= p.project.name %></td>
+    <td><%= p.hours.to_s %></td>
+  </tr>
+  <% end %>
+  </tbody>
+</table>

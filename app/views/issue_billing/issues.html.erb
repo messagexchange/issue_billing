@@ -1,0 +1,20 @@
+<h2>Issues for billing for <%= @billing_project.name %></h2>
+
+<table class="list">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Subject</th>
+      <th>Billable Hours</th>
+    </tr>
+  </thead>
+  <tbody>
+<% @issues.each do |i| %>
+  <tr>
+    <td><%= i.id %></td>
+    <td><%= i.subject %></td>
+    <td><%= i.hours.to_s %></td>
+  </tr>
+  <% end %>
+  </tbody>
+</table>
