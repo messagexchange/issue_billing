@@ -5,14 +5,14 @@
     <tr>
       <th>Project ID</th>
       <th>Project Name</th>
-      <th>Billable Hours</th>
+      <th>Time spent</th>
     </tr>
   </thead>
   <tbody>
 <% @projects.each do |p| %>
   <tr>
     <td><%= p.project.id %></td>
-    <td><%= p.project.name %></td>
+    <td><%= link_to p.project.name, :controller => "issue_billing", :action => "issues", :id => p.project.id %></td>
     <td><%= p.hours.to_s %></td>
   </tr>
   <% end %>

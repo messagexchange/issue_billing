@@ -1,11 +1,16 @@
 <h2>Issues for billing for <%= @billing_project.name %></h2>
 
+<%= form_for(@billing_filter, :url => { :action => 'issues'}) do |f| %>
+<%= render :partial => 'filter', :locals => {f => @f} %>
+<% end %>
+
 <table class="list">
   <thead>
     <tr>
       <th>ID</th>
       <th>Subject</th>
-      <th>Billable Hours</th>
+      <th>Date and Time</th>
+      <th>Time spent</th>
     </tr>
   </thead>
   <tbody>
@@ -13,6 +18,7 @@
   <tr>
     <td><%= i.id %></td>
     <td><%= i.subject %></td>
+    <td><%= format_time(i.created_on) %></td>
     <td><%= i.hours.to_s %></td>
   </tr>
   <% end %>

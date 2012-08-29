@@ -1,0 +1,12 @@
+<div id="query_form_content" class="hide-when-print">
+  <h3>Filter</h3>
+  <%= f.label_tag :start_date, "Start date" %>
+  <%= f.text_field_tag :start_date %>
+  <%= calendar_for :start_date %>
+
+  <%= f.label_tag :end_date, "End date" %>
+  <%= f.text_field_tag :end_date %>
+  <%= calendar_for :end_date %>
+
+  <%= submit_tag "Filter" %>
+</div>
