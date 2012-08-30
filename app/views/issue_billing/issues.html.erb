@@ -1,6 +1,6 @@
-<h2>Issues for billing - <%= @billing_project.name %></h2>
+<h2>Issues for billing - <%= @project.name %></h2>
 
-<%= form_for(@billing_filter, :url => { :action => 'issues'}, :method => "get") do |f| %>
+<%= form_for(@billing_filter, :url => billing_issues_path,  :method => "get") do |f| %>
 <%= render :partial => 'filter', :locals => {:f => f} %>
 <% end %>
 

@@ -1,20 +1,14 @@
 class IssueBillingController < ApplicationController
   unloadable
 
-  # list all projects and their billed time
-  def index
-    @projects = TimeEntry.includes("project") \
-                         .joins(:issue) \
-                         .select("time_entires.project_id, sum(hours) as hours") \
-                         .group("time_entries.project_id")
-  end
+  before_filter :find_project, :authorize
 
   # list all billable issues for a project
   def issues
-    id = params[:id]
-    @billing_project = Project.find(id)
     issues_scope = Issue.joins(:time_entries) \
-                   .where(:project_id => id) \
+                   .joins(:status) \
+                   .where(:project_id => @project.id) \
+                   .where("issue_statuses.is_closed = ?", true) \
                    .includes("time_entries") \
                    .select("issues.id as id, issues.subject as subject, issues.created_on as created_on, sum(time_entries.hours) as hours") \
                    .group("issues.id").scoped
@@ -27,6 +21,12 @@ class IssueBillingController < ApplicationController
     end
 
     @issues = issues_scope
+  end
+
+  private
+  def find_project
+    # @project variable must be set before calling the authorize filter
+    @project = Project.find(params[:id])
   end
 
 end
