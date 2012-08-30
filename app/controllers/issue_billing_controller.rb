@@ -12,13 +12,21 @@ class IssueBillingController < ApplicationController
   # list all billable issues for a project
   def issues
     id = params[:id]
-    @billing_filter = BillingFilter.new
     @billing_project = Project.find(id)
-    @issues = Issue.joins(:time_entries) \
+    issues_scope = Issue.joins(:time_entries) \
                    .where(:project_id => id) \
                    .includes("time_entries") \
                    .select("issues.id as id, issues.subject as subject, issues.created_on as created_on, sum(time_entries.hours) as hours") \
-                   .group("issues.id")
+                   .group("issues.id").scoped
+
+    @billing_filter = BillingFilter.new(params[:billing_filter])
+
+    if @billing_filter.valid?
+      issues_scope = issues_scope.where("issues.created_on > ?", @billing_filter.start_date) unless @billing_filter.start_date.nil?
+      issues_scope = issues_scope.where("issues.created_on <= ?", @billing_filter.end_date) unless @billing_filter.end_date.nil?
+    end
+
+    @issues = issues_scope
   end
 
 end

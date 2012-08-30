@@ -1,7 +1,7 @@
 <h2>Issues for billing for <%= @billing_project.name %></h2>
 
-<%= form_for(@billing_filter, :url => { :action => 'issues'}) do |f| %>
-<%= render :partial => 'filter', :locals => {f => @f} %>
+<%= form_for(@billing_filter, :url => { :action => 'issues'}, :method => "get") do |f| %>
+<%= render :partial => 'filter', :locals => {:f => f} %>
 <% end %>
 
 <table class="list">

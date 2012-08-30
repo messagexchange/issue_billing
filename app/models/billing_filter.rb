@@ -17,14 +17,17 @@ class BillingFilter < ActiveRecord::Base
   end
 
   def start_date_is_date    
-    errors.add(:start_date, "is not a date.") unless is_date(start_date)
+    return if start_date.nil?
+    #errors.add("The start date is not a date.") unless is_date(start_date)
   end
 
-  def end_date_is_date   
-    errors.add(:end_date, "is not a date.") unless is_date(end_date)
+  def end_date_is_date
+    return if end_date.nil?
+    #errors.add("The end data is not a date.") unless is_date(end_date)
   end
 
   def dates_are_in_order
+    return if start_date.nil? || end_date.nil?
     errors.add(:end_date, "end date cannot be before start date.") unless start_date <= end_date
   end
 end
