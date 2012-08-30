@@ -1,9 +1,10 @@
-<h2>Issues for billing for <%= @billing_project.name %></h2>
+<h2>Issues for billing - <%= @billing_project.name %></h2>
 
 <%= form_for(@billing_filter, :url => { :action => 'issues'}, :method => "get") do |f| %>
 <%= render :partial => 'filter', :locals => {:f => f} %>
 <% end %>
 
+<% unless @issues.empty? %>
 <table class="list">
   <thead>
     <tr>
@@ -24,3 +25,7 @@
   <% end %>
   </tbody>
 </table>
+<% else %>
+<p class="nodata">There are no issues to bill. Please clear or alter the filter.</p>
+<% end %>
+

@@ -8,14 +8,40 @@
   </div>
 <% end %>
 
+
 <div id="query_form_content" class="hide-when-print">
-  <%= f.label "Start date" %>
-  <%= f.text_field :start_date %>
-  <%= calendar_for "billing_filter_start_date" %>
+  <fieldset id="filters" class="collapsible">
+    <legend onclick="toggleFieldset(this);">Filter</legend>
+      <div style>
+        <table style="width: 100%;">
+          <tbody>
+            <tr>
+              <td>
+                <%= f.label "Start date" %>
+              </td>
+              <td>
+                <%= f.text_field :start_date %>
+                <%= calendar_for "billing_filter_start_date" %>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <%= f.label "End date" %>
+              </td>
+              <td>
+                <%= f.text_field :end_date %>
+                <%= calendar_for "billing_filter_end_date" %>
+              </td>
+            </tr>
+          </tbody>
+        </table>
 
-  <%= f.label "End date" %>
-  <%= f.text_field :end_date %>
-  <%= calendar_for "billing_filter_end_date" %>
 
-  <%= submit_tag "Filter" %>
+    </div>
+  </fieldset>
 </div>
+
+<p class="buttons hide-when-print">
+  <%= link_to_function l(:button_apply), "$('new_billing_filter').submit(); return false", :class => 'icon icon-checked' %>
+  <%= link_to "Clear Filter", billing_issues_path, :class => 'icon icon-reload' %>
+</p>

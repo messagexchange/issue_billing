@@ -22,8 +22,8 @@ class IssueBillingController < ApplicationController
     @billing_filter = BillingFilter.new(params[:billing_filter])
 
     if @billing_filter.valid?
-      issues_scope = issues_scope.where("issues.created_on > ?", @billing_filter.start_date) unless @billing_filter.start_date.nil?
-      issues_scope = issues_scope.where("issues.created_on <= ?", @billing_filter.end_date) unless @billing_filter.end_date.nil?
+      issues_scope = issues_scope.where("issues.updated_on > ?", @billing_filter.start_date) unless @billing_filter.start_date.nil?
+      issues_scope = issues_scope.where("issues.updated_on <= ?", @billing_filter.end_date) unless @billing_filter.end_date.nil?
     end
 
     @issues = issues_scope
