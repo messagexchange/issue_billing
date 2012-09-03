@@ -11,6 +11,7 @@
       <th>ID</th>
       <th>Subject</th>
       <th>Date and Time</th>
+      <th>Actioned by</th>
       <th>Time spent</th>
     </tr>
   </thead>
@@ -20,6 +21,7 @@
     <td><%= i.id %></td>
     <td><%= i.subject %></td>
     <td><%= format_time(i.created_on) %></td>
+    <td><%= (i.assigned_to.nil?) ? i.author : i.assigned_to %></td>
     <td><%= i.hours.to_s %></td>
   </tr>
   <% end %>
@@ -28,4 +30,11 @@
 <% else %>
 <p class="nodata">There are no issues to bill. Please clear or alter the filter.</p>
 <% end %>
+
+<p class="other-formats">
+  Also available in:  
+  <span>
+    <%= link_to "CSV", billing_issues_path(:format => 'csv') %>
+  </span>
+</p>
 

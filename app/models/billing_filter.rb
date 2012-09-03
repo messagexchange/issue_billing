@@ -28,6 +28,6 @@ class BillingFilter < ActiveRecord::Base
 
   def dates_are_in_order
     return if start_date.nil? || end_date.nil?
-    errors.add(:end_date, "end date cannot be before start date.") unless start_date <= end_date
+    errors.add(:end_date, " cannot be before start date.") unless start_date <= end_date
   end
 end

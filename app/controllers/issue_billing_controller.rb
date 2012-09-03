@@ -1,4 +1,6 @@
 class IssueBillingController < ApplicationController
+  include IssueBillingHelper
+
   unloadable
 
   before_filter :find_project, :authorize
@@ -7,6 +9,7 @@ class IssueBillingController < ApplicationController
   def issues
     issues_scope = Issue.joins(:time_entries) \
                    .joins(:status) \
+                   .joins(:assigned_to) \
                    .where(:project_id => @project.id) \
                    .where("issue_statuses.is_closed = ?", true) \
                    .includes("time_entries") \
@@ -20,7 +23,12 @@ class IssueBillingController < ApplicationController
       issues_scope = issues_scope.where("issues.updated_on <= ?", @billing_filter.end_date) unless @billing_filter.end_date.nil?
     end
 
-    @issues = issues_scope
+    @issues = issues_scope.all
+
+    respond_to do |format|
+      format.html { render :template => 'issue_billing/issues' }
+      format.csv { send_data(billing_to_csv(@issues), :type => 'text/csv; header=present', :filename => 'export.csv') }
+    end
   end
 
   private
