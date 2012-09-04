@@ -25,12 +25,12 @@ class IssueBillingController < ApplicationController
     end
 
     # setup pagination
-    @limit = per_page_option
-    @issue_count = issues_scope.count
-    @issue_pages = Paginator.new self, @issue_count, @limit, params['page']
-    @offset ||= @issue_pages.current.offset
+    # @limit = per_page_option
+    # @issue_count = issues_scope.count
+    # @issue_pages = Paginator.new self, @issue_count, @limit, params['page']
+    # @offset ||= @issue_pages.current.offset
 
-    @issues = issues_scope.offset(@offset).limit(@limit)
+    @issues = issues_scope #.offset(@offset).limit(@limit)
 
     respond_to do |format|
       format.html { render :template => 'issue_billing/issues' }

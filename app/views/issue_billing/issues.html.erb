@@ -12,23 +12,22 @@
       <th>Subject</th>
       <th>Date and Time</th>
       <th>Actioned by</th>
-      <th>Time spent</th>
+      <th>Time spent (hours)</th>
     </tr>
   </thead>
   <tbody>
 <% @issues.each do |i| %>
   <tr>
     <td><%= i.id %></td>
-    <td><%= i.subject %></td>
+    <td><%= link_to i.subject, issue_path(i) %></td>
     <td><%= format_time(i.created_on) %></td>
     <td><%= (i.assigned_to.nil?) ? i.author : i.assigned_to %></td>
-    <td><%= i.hours.to_s %></td>
+    <td><%= get_billable_hours(i.hours).to_s %></td>
   </tr>
   <% end %>
   </tbody>
 </table>
 
-<p class="pagination"><%= pagination_links_full @issue_pages, @issue_count %></p>
 <% else %>
 <p class="nodata">There are no issues to bill. Please clear or alter the filter.</p>
 <% end %>
