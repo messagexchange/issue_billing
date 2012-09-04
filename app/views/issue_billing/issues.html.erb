@@ -27,6 +27,8 @@
   <% end %>
   </tbody>
 </table>
+
+<p class="pagination"><%= pagination_links_full @issue_pages, @issue_count %></p>
 <% else %>
 <p class="nodata">There are no issues to bill. Please clear or alter the filter.</p>
 <% end %>
@@ -35,6 +37,9 @@
   Also available in:  
   <span>
     <%= link_to "CSV", billing_issues_path(:format => 'csv') %>
+  </span>
+  <span>
+    <%= link_to "PDF", billing_issues_path(:format => 'pdf') %>
   </span>
 </p>
 
