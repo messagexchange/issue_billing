@@ -11,6 +11,7 @@
       <th>ID</th>
       <th>Subject</th>
       <th>Date and Time</th>
+      <th>Raised by</th>
       <th>Actioned by</th>
       <th>Time spent (hours)</th>
     </tr>
@@ -21,6 +22,7 @@
     <td><%= i.id %></td>
     <td><%= link_to i.subject, issue_path(i) %></td>
     <td><%= format_time(i.created_on) %></td>
+    <td><%= i.custom_value %></td>
     <td><%= (i.assigned_to.nil?) ? i.author : i.assigned_to %></td>
     <td><%= get_billable_hours(i.hours).to_s %></td>
   </tr>

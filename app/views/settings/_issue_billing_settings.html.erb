@@ -1,0 +1,14 @@
+<p>
+  <label for="ib_tracker_id">Tracker to bill</label>
+  <%= text_field_tag 'settings[ib_tracker_id]', @settings['ib_tracker_id'] %>
+</p>
+
+<p>
+  <label for="ib_non_billable_activity_ids">Non billable activities</label>
+  <%= text_field_tag 'settings[ib_non_billable_activity_ids]', @settings['ib_non_billable_activity_ids'] %>
+</p>
+
+<p>
+  <label for="ib_raised_by_id">Custom field id for Raised by value</label>
+  <%= text_field_tag 'settings[ib_raised_by_id]', @settings['ib_raised_by_id'] %>
+</p>

@@ -17,6 +17,13 @@ Redmine::Plugin.register :issue_billing do
     :caption => 'Billing', 
     :before => :settings
   )
+
+  # settings for billing
+  settings :partial => 'issue_billing_settings', :default => {
+    'ib_tracker_id' => 0,
+    'ib_non_billable_activity_ids' => 0,
+    'ib_raised_by_id' => 0
+  }
 end
 
 
