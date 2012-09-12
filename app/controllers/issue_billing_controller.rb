@@ -50,9 +50,12 @@ class IssueBillingController < ApplicationController
 
     @issues = issues_scope.all #.offset(@offset).limit(@limit)
 
+    # add total hours
+    @total_hours = @issues.inject(0) { |sum, item| sum + get_billable_hours(item.hours) }
+
     respond_to do |format|
       format.html { render :template => 'issue_billing/issues' }
-      format.csv  { send_data(billing_to_csv(@issues), :type => 'text/csv; header=present', :filename => 'export.csv') }
+      format.csv  { send_data(billing_to_csv(@issues, @total_hours), :type => 'text/csv; header=present', :filename => 'export.csv') }
       format.pdf  { send_data(issues_to_pdf(@issues, @project, nil), :type => 'application/pdf', :filename => 'export.pdf') }
     end
   end
