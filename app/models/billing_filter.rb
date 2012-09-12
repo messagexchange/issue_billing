@@ -12,6 +12,14 @@ class BillingFilter < ActiveRecord::Base
   validate :end_date_is_date
   validate :dates_are_in_order
 
+  after_initialize :set_default_dates
+
+  def set_default_dates
+    self.start_date ||= Time.now.beginning_of_month.strftime("%Y-%m-%d")
+    self.end_date   ||= Time.now.end_of_month.strftime("%Y-%m-%d")
+  end
+
+
   def is_date(value)
     value =~ /^\d{4}-\d{2}-\d{2}$/ && begin; value.to_date; rescue; false end
   end
