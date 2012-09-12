@@ -22,7 +22,7 @@
     <td><%= i.id %></td>
     <td><%= link_to i.subject, issue_path(i) %></td>
     <td><%= format_time(i.created_on) %></td>
-    <td><%= i.custom_value %></td>
+    <td><%= i.custom_value.split(";").first.strip %></td>
     <td><%= (i.assigned_to.nil?) ? i.author : i.assigned_to %></td>
     <td><%= get_billable_hours(i.hours).to_s %></td>
   </tr>

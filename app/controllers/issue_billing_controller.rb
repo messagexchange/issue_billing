@@ -42,7 +42,6 @@ class IssueBillingController < ApplicationController
       issues_scope = issues_scope.where("#{TimeEntry.table_name}.activity_id NOT IN (?)", activities)
     end
 
-
     # setup pagination
     # @limit = per_page_option
     # @issue_count = issues_scope.count
