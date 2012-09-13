@@ -43,13 +43,7 @@ class IssueBillingController < ApplicationController
       issues_scope = issues_scope.where("#{TimeEntry.table_name}.activity_id NOT IN (?)", activities)
     end
 
-    # setup pagination
-    # @limit = per_page_option
-    # @issue_count = issues_scope.count
-    # @issue_pages = Paginator.new self, @issue_count, @limit, params['page']
-    # @offset ||= @issue_pages.current.offset
-
-    @issues = issues_scope.all #.offset(@offset).limit(@limit)
+    @issues = issues_scope.all
 
     # add total hours
     @total_hours = @issues.inject(0) { |sum, item| sum + get_billable_hours(item.hours) }

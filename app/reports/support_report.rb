@@ -3,6 +3,8 @@ class SupportReport < Prawn::Document
   include Redmine::I18n
 
   def to_pdf(issues, project, total_hours, start_date, end_date)
+    image "#{IssueBilling::LOGO_URL}#{Setting.plugin_issue_billing['ib_logo_image']}"
+
     font_size(16) { text "Support Log" }
     
     move_down 10
@@ -15,12 +17,15 @@ class SupportReport < Prawn::Document
     font( "Helvetica", :style => :bold ) { text "Period:" }
     text "#{start_date} - #{end_date}"
 
+    move_down 10
+    
+    font( "Helvetica", :style => :bold ) { text "Total hours:" }
+    text "#{total_hours}"
+
     move_down 20
     font_size 10
 
     issues_array = create_issues_table(issues)
-
-    Support.log_debug(issues_array)
 
     table(issues_array)
 
