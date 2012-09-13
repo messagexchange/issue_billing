@@ -1,3 +1,5 @@
+require 'prawn'
+
 Redmine::Plugin.register :issue_billing do
   name 'Issue Billing plugin'
   author 'Paul Van de Vreede'

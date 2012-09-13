@@ -44,10 +44,10 @@
 <p class="other-formats">
   Also available in:  
   <span>
-    <%= link_to "CSV", billing_issues_path(:format => 'csv') %>
+    <%= link_to "CSV", billing_issues_path(params.merge(:format => 'csv')) %>
   </span>
   <span>
-    <%= link_to "PDF", billing_issues_path(:format => 'pdf') %>
+    <%= link_to "PDF", billing_issues_path(params.merge(:format => 'pdf')) %>
   </span>
 </p>
 

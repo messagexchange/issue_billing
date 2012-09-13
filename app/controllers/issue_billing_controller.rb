@@ -1,6 +1,7 @@
+require "#{File.expand_path(File.dirname(__FILE__)+ '/../')}/reports/support_report.rb"
+
 class IssueBillingController < ApplicationController
   include IssueBillingHelper
-  include Redmine::Export::PDF
 
   unloadable
 
@@ -56,7 +57,7 @@ class IssueBillingController < ApplicationController
     respond_to do |format|
       format.html { render :template => 'issue_billing/issues' }
       format.csv  { send_data(billing_to_csv(@issues, @total_hours), :type => 'text/csv; header=present', :filename => 'export.csv') }
-      format.pdf  { send_data(issues_to_pdf(@issues, @project, nil), :type => 'application/pdf', :filename => 'export.pdf') }
+      format.pdf  { send_data(SupportReport.new.to_pdf(@issues, @project, @total_hours, @billing_filter.start_date, @billing_filter.end_date), :type => 'application/pdf', :filename => 'export.pdf') }
     end
   end
 
