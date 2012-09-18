@@ -26,7 +26,7 @@ class IssueBillingController < ApplicationController
       issues_scope = issues_scope.where("issues.updated_on <= ?", @billing_filter.end_date) unless @billing_filter.end_date.nil?
     end
 
-    unless Setting.plugin_issue_billing['ib_raised_by_id'] == '0' && Setting.plugin_issue_billing['ib_raised_by_id'].nil?
+    unless Setting.plugin_issue_billing['ib_raised_by_id'].to_s == '0' && Setting.plugin_issue_billing['ib_raised_by_id'].nil?
       issues_scope = issues_scope.joins("LEFT OUTER JOIN #{CustomValue.table_name} ON #{CustomValue.table_name}.customized_id = #{Issue.table_name}.id") \
                                  .where(:custom_values => { :customized_type => 'Issue' }) \
                                  .where(:custom_values => { :custom_field_id => Setting.plugin_issue_billing['ib_raised_by_id'] }) \
@@ -34,12 +34,12 @@ class IssueBillingController < ApplicationController
     end
 
     # get only the set trackers
-    unless Setting.plugin_issue_billing['ib_tracker_id'] == '0'
+    unless Setting.plugin_issue_billing['ib_tracker_id'].to_s == '0'
       issues_scope = issues_scope.where(:tracker_id =>  Setting.plugin_issue_billing['ib_tracker_id'])
     end
 
-    unless Setting.plugin_issue_billing['ib_non_billable_activity_ids'] == '0'
-      activities = Setting.plugin_issue_billing['ib_non_billable_activity_ids'].split(";")
+    unless Setting.plugin_issue_billing['ib_non_billable_activity_ids'].to_s == '0'
+      activities = Setting.plugin_issue_billing['ib_non_billable_activity_ids'].to_s.split(";")
       issues_scope = issues_scope.where("#{TimeEntry.table_name}.activity_id NOT IN (?)", activities)
     end
 
