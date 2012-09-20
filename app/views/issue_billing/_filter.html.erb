@@ -1,5 +1,5 @@
 <% if @billing_filter.errors.any? %>
-  <div id="errorExplanation">    
+  <div id="errorExplanation">
     <ul>
     <% @billing_filter.errors.full_messages.each do |msg| %>
       <li><%= msg %></li>
@@ -17,7 +17,7 @@
           <tbody>
             <tr>
               <td>
-                <%= f.label "Start date" %>
+                <%= f.label "Creation start date" %>
               </td>
               <td>
                 <%= f.text_field :start_date %>
@@ -26,7 +26,7 @@
             </tr>
             <tr>
               <td>
-                <%= f.label "End date" %>
+                <%= f.label "Creation end date" %>
               </td>
               <td>
                 <%= f.text_field :end_date %>

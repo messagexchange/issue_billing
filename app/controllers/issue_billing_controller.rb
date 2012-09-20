@@ -10,37 +10,37 @@ class IssueBillingController < ApplicationController
   # list all billable issues for a project
   def issues
     issues_scope = Issue \
-                   .joins(:time_entries) \
-                   .joins(:status) \
-                   .where(:custom_values => { :customized_type => 'Issue' }) \
-                   .where(:project_id => @project.id) \
-                   .where(:issue_statuses => { :is_closed => true }) \
-                   .includes("time_entries") \
-                   .select("issues.id as id, issues.subject as subject, #{CustomValue.table_name}.value as custom_value,issues.assigned_to_id as assigned_to_id,issues.created_on as created_on, sum(time_entries.hours) as hours") \
-                   .group("issues.id").scoped
+    .joins(:time_entries) \
+    .joins(:status) \
+    .where(:project_id => @project.id) \
+    .where(:issue_statuses => { :is_closed => true }) \
+    .select("issues.id as id, issues.subject as subject, issues.assigned_to_id as assigned_to_id, \
+      issues.author_id as author_id, issues.created_on as created_on, sum(time_entries.hours) as hours") \
+    .group("issues.id") \
+    .scoped
 
     @billing_filter = BillingFilter.new(params[:billing_filter])
 
     if @billing_filter.valid?
-      issues_scope = issues_scope.where("issues.updated_on > ?", @billing_filter.start_date) unless @billing_filter.start_date.nil?
-      issues_scope = issues_scope.where("issues.updated_on <= ?", @billing_filter.end_date) unless @billing_filter.end_date.nil?
+      issues_scope = issues_scope.where("issues.created_on >= ?", @billing_filter.start_date).scoped unless @billing_filter.start_date.nil?
+      issues_scope = issues_scope.where("issues.created_on <= ?", @billing_filter.end_date).scoped unless @billing_filter.end_date.nil?
     end
 
-    unless Setting.plugin_issue_billing['ib_raised_by_id'].to_s == '0' && Setting.plugin_issue_billing['ib_raised_by_id'].nil?
+    unless Setting.plugin_issue_billing['ib_raised_by_id'].to_s == '0'
       issues_scope = issues_scope.joins("LEFT OUTER JOIN #{CustomValue.table_name} ON #{CustomValue.table_name}.customized_id = #{Issue.table_name}.id") \
-                                 .where(:custom_values => { :customized_type => 'Issue' }) \
-                                 .where(:custom_values => { :custom_field_id => Setting.plugin_issue_billing['ib_raised_by_id'] }) \
-                                 .select("#{CustomValue.table_name}.value as custom_value")
+      .where(:custom_values => { :customized_type => 'Issue' }) \
+      .where(:custom_values => { :custom_field_id => Setting.plugin_issue_billing['ib_raised_by_id'] }) \
+      .select("#{CustomValue.table_name}.value as custom_value").scoped
     end
 
     # get only the set trackers
     unless Setting.plugin_issue_billing['ib_tracker_id'].to_s == '0'
-      issues_scope = issues_scope.where(:tracker_id =>  Setting.plugin_issue_billing['ib_tracker_id'])
+      issues_scope = issues_scope.where(:tracker_id => Setting.plugin_issue_billing['ib_tracker_id']).scoped
     end
 
     unless Setting.plugin_issue_billing['ib_non_billable_activity_ids'].to_s == '0'
       activities = Setting.plugin_issue_billing['ib_non_billable_activity_ids'].to_s.split(";")
-      issues_scope = issues_scope.where("#{TimeEntry.table_name}.activity_id NOT IN (?)", activities)
+      issues_scope = issues_scope.where("#{TimeEntry.table_name}.activity_id NOT IN (?)", activities).scoped
     end
 
     @issues = issues_scope.all

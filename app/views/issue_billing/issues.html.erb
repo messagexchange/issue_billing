@@ -10,7 +10,7 @@
     <tr>
       <th>ID</th>
       <th>Subject</th>
-      <th>Date and Time</th>
+      <th>Created date and time</th>
       <th>Raised by</th>
       <th>Actioned by</th>
       <th>Time spent (hours)</th>
@@ -22,7 +22,7 @@
     <td><%= i.id %></td>
     <td><%= link_to i.subject, issue_path(i) %></td>
     <td><%= format_time(i.created_on) %></td>
-    <td><%= i.custom_value.split(";").first.strip %></td>
+    <td><%= (i.respond_to?(:custom_value)) ? i.custom_value.split(";").first.strip : i.author %></td>
     <td><%= (i.assigned_to.nil?) ? i.author : i.assigned_to %></td>
     <td><%= get_billable_hours(i.hours).to_s %></td>
   </tr>
@@ -42,7 +42,7 @@
 <% end %>
 
 <p class="other-formats">
-  Also available in:  
+  Also available in:
   <span>
     <%= link_to "CSV", billing_issues_path(params.merge(:format => 'csv')) %>
   </span>

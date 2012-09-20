@@ -3,7 +3,7 @@ module IssueBillingHelper
   def billing_to_csv(issues, total_hours)
     export = FCSV.generate(:col_sep => ',') do |csv|
       # add headers
-      csv << ["Id", "Subject", "Date", "Raised by", "Actioned by", "Time spent (hours)"]
+      csv << ["Id", "Subject", "Created date and time", "Raised by", "Actioned by", "Time spent (hours)"]
 
       # add data
       issues.each do |i|
