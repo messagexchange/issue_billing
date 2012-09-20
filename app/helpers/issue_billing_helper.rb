@@ -7,12 +7,11 @@ module IssueBillingHelper
 
       # add data
       issues.each do |i|
-        csv << [i.id, i.subject, format_time(i.created_on), i.custom_value.split(";").first.strip, (i.assigned_to.nil?) ? i.author : i.assigned_to, get_billable_hours(i.hours).to_s]
+        csv << [i.id, i.subject, format_time(i.created_on), i.raised_by, (i.assigned_to.nil?) ? i.author : i.assigned_to, get_billable_hours(i.hours).to_s]
       end
 
       # add total at bottom
       csv << [nil, nil, nil, nil,"Total", total_hours]
-
     end
     export
   end

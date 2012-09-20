@@ -10,40 +10,29 @@ class IssueBillingController < ApplicationController
   # list all billable issues for a project
   def issues
     issues_scope = Issue \
-    .joins(:time_entries) \
     .joins(:status) \
+    .joins(:time_entries) \
+    .includes(:time_entries) \
+    .includes(:custom_values) \
     .where(:project_id => @project.id) \
     .where(:issue_statuses => { :is_closed => true }) \
-    .select("issues.id as id, issues.subject as subject, issues.assigned_to_id as assigned_to_id, \
-      issues.author_id as author_id, issues.created_on as created_on, sum(time_entries.hours) as hours") \
-    .group("issues.id") \
     .scoped
 
     @billing_filter = BillingFilter.new(params[:billing_filter])
 
     if @billing_filter.valid?
-      issues_scope = issues_scope.where("issues.created_on >= ?", @billing_filter.start_date).scoped unless @billing_filter.start_date.nil?
-      issues_scope = issues_scope.where("issues.created_on <= ?", @billing_filter.end_date).scoped unless @billing_filter.end_date.nil?
-    end
-
-    unless Setting.plugin_issue_billing['ib_raised_by_id'].to_s == '0'
-      issues_scope = issues_scope.joins("LEFT OUTER JOIN #{CustomValue.table_name} ON #{CustomValue.table_name}.customized_id = #{Issue.table_name}.id") \
-      .where(:custom_values => { :customized_type => 'Issue' }) \
-      .where(:custom_values => { :custom_field_id => Setting.plugin_issue_billing['ib_raised_by_id'] }) \
-      .select("#{CustomValue.table_name}.value as custom_value").scoped
+      issues_scope = issues_scope.where("#{Issue.table_name}.created_on >= ?", @billing_filter.start_date).scoped unless @billing_filter.start_date.nil?
+      issues_scope = issues_scope.where("#{Issue.table_name}.created_on <= ?", @billing_filter.end_date).scoped unless @billing_filter.end_date.nil?
     end
 
     # get only the set trackers
-    unless Setting.plugin_issue_billing['ib_tracker_id'].to_s == '0'
+    if is_setting_set?('ib_tracker_id')
       issues_scope = issues_scope.where(:tracker_id => Setting.plugin_issue_billing['ib_tracker_id']).scoped
     end
 
-    unless Setting.plugin_issue_billing['ib_non_billable_activity_ids'].to_s == '0'
-      activities = Setting.plugin_issue_billing['ib_non_billable_activity_ids'].to_s.split(";")
-      issues_scope = issues_scope.where("#{TimeEntry.table_name}.activity_id NOT IN (?)", activities).scoped
-    end
+    @activities = (is_setting_set?('ib_non_billable_activity_ids')) ? [] : Setting.plugin_issue_billing['ib_non_billable_activity_ids'].to_s.split(";")
 
-    @issues = issues_scope.all
+    @issues = build_issues_list(issues_scope.all)
 
     # add total hours
     @total_hours = @issues.inject(0) { |sum, item| sum + get_billable_hours(item.hours) }
@@ -59,6 +48,42 @@ class IssueBillingController < ApplicationController
   def find_project
     # @project variable must be set before calling the authorize filter
     @project = Project.find(params[:id])
+  end
+
+  def is_setting_set?(setting_name)
+    return false if Setting.plugin_issue_billing[setting_name].to_s == '0' || Setting.plugin_issue_billing[setting_name].blank?
+    true
+  end
+
+  def build_issues_list(issues)
+    # remove issues marked as non-billable
+    issues.delete_if { |i| !i.custom_value_for(Setting.plugin_issue_billing['ib_non_billable_custom_id'].to_i).nil? \
+      && i.custom_value_for(Setting.plugin_issue_billing['ib_non_billable_custom_id'].to_i).value == "1" }
+
+    issues.map! do |i|
+      # dynamically give it an hours property and raised by
+      i.class.module_eval do
+        attr_accessor :hours
+        attr_accessor :raised_by
+      end
+
+      # sum all the hours
+      i.hours = i.time_entries.inject(0) do |sum, t|
+        if @activities.include? t.id.to_s
+          sum
+        else
+          sum + get_billable_hours(t.hours)
+        end
+      end
+
+      # set the raised by
+      if is_setting_set?('ib_raised_by_id')
+        i.raised_by = i.custom_value_for(Setting.plugin_issue_billing['ib_raised_by_id']).value.split(";").first.strip
+      else
+        i.raised_by = i.author.to_s
+      end
+      i
+    end
   end
 
 end

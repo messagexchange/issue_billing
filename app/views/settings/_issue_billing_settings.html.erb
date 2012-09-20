@@ -14,6 +14,11 @@
 </p>
 
 <p>
+  <label for="ib_non_billable_custom_id">Custom field id non billable issue field</label>
+  <%= text_field_tag 'settings[ib_non_billable_custom_id]', @settings['ib_non_billable_custom_id'] %>
+</p>
+
+<p>
   <label for="ib_logo_image">PDF logo filename (must be in &lt;plugin dir&gt;/logos/</label>
   <%= text_field_tag 'settings[ib_logo_image]', @settings['ib_logo_image'] %>
 </p>

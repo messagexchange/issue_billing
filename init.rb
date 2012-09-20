@@ -13,10 +13,10 @@ Redmine::Plugin.register :issue_billing do
 
   # add billing menu option
   menu(
-    :project_menu, 
-    :billing, 
-    { :controller => 'issue_billing', :action => 'issues' }, 
-    :caption => 'Billing', 
+    :project_menu,
+    :billing,
+    { :controller => 'issue_billing', :action => 'issues' },
+    :caption => 'Billing',
     :before => :settings
   )
 
@@ -25,7 +25,8 @@ Redmine::Plugin.register :issue_billing do
     'ib_tracker_id' => 0,
     'ib_non_billable_activity_ids' => 0,
     'ib_raised_by_id' => 0,
-    'ib_logo_image' => 'logo.png'
+    'ib_logo_image' => 'logo.png',
+    'ib_non_billable_custom_id' => 0
   }
 end
 
