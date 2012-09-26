@@ -45,45 +45,48 @@ class IssueBillingController < ApplicationController
   end
 
   private
-  def find_project
-    # @project variable must be set before calling the authorize filter
-    @project = Project.find(params[:id])
-  end
-
-  def is_setting_set?(setting_name)
-    return false if Setting.plugin_issue_billing[setting_name].to_s == '0' || Setting.plugin_issue_billing[setting_name].blank?
-    true
-  end
-
-  def build_issues_list(issues)
-    # remove issues marked as non-billable
-    issues.delete_if { |i| !i.custom_value_for(Setting.plugin_issue_billing['ib_non_billable_custom_id'].to_i).nil? \
-      && i.custom_value_for(Setting.plugin_issue_billing['ib_non_billable_custom_id'].to_i).value == "1" }
-
-    issues.map! do |i|
-      # dynamically give it an hours property and raised by
-      i.class.module_eval do
-        attr_accessor :hours
-        attr_accessor :raised_by
-      end
-
-      # sum all the hours
-      i.hours = i.time_entries.inject(0) do |sum, t|
-        if @activities.include? t.id.to_s
-          sum
-        else
-          sum + get_billable_hours(t.hours)
-        end
-      end
-
-      # set the raised by
-      if is_setting_set?('ib_raised_by_id')
-        i.raised_by = i.custom_value_for(Setting.plugin_issue_billing['ib_raised_by_id']).value.split(";").first.strip
-      else
-        i.raised_by = i.author.to_s
-      end
-      i
+    def find_project
+      # @project variable must be set before calling the authorize filter
+      @project = Project.find(params[:id])
     end
-  end
+
+    def is_setting_set?(setting_name)
+      return false if Setting.plugin_issue_billing[setting_name].to_s == '0' || Setting.plugin_issue_billing[setting_name].blank?
+      true
+    end
+
+    def build_issues_list(issues)
+      # remove issues marked as non-billable
+      issues.delete_if { |i| !i.custom_value_for(Setting.plugin_issue_billing['ib_non_billable_custom_id'].to_i).nil? \
+        && i.custom_value_for(Setting.plugin_issue_billing['ib_non_billable_custom_id'].to_i).value == "1" }
+
+      issues.map! do |i|
+        # dynamically give it an hours property and raised by
+        i.class.module_eval do
+          attr_accessor :hours
+          attr_accessor :raised_by
+        end
+
+        # sum all the hours
+        i.hours = i.time_entries.inject(0) do |sum, t|
+          if @activities.include? t.id.to_s
+            sum
+          else
+            sum + t.hours
+          end
+        end
+
+        # convert to billable hours
+        i.hours = get_billable_hours(i.hours)
+
+        # set the raised by
+        if is_setting_set?('ib_raised_by_id')
+          i.raised_by = i.custom_value_for(Setting.plugin_issue_billing['ib_raised_by_id']).value.split(";").first.strip
+        else
+          i.raised_by = i.author.to_s
+        end
+        i
+      end
+    end
 
 end
