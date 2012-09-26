@@ -3,7 +3,7 @@ class SupportReport < Prawn::Document
   include Redmine::I18n
 
   def to_pdf(issues, project, total_hours, start_date, end_date)
-    image "#{IssueBilling::LOGO_URL}#{Setting.plugin_issue_billing['ib_logo_image']}"
+    image "#{IssueBilling::LOGO_URL}#{Setting.plugin_issue_billing['ib_logo_image']}", :height => 50
 
     font_size(16) { text "Support Log" }
 
