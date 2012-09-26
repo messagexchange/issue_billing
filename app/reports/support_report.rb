@@ -27,7 +27,8 @@ class SupportReport < Prawn::Document
 
     issues_array = create_issues_table(issues)
 
-    table(issues_array)
+    font_size 8
+    table(issues_array, :header => true)
 
     render
   end
