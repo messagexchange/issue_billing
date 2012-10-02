@@ -1,12 +1,13 @@
 class BillingFilter < ActiveRecord::Base
   def self.columns() @columns ||= []; end
- 
+
   def self.column(name, sql_type = nil, default = nil, null = true)
     columns << ActiveRecord::ConnectionAdapters::Column.new(name.to_s, default, sql_type.to_s, null)
   end
-  
+
   column :start_date, :date
   column :end_date, :date
+  column :closed, :boolean
 
   validate :start_date_is_date
   validate :end_date_is_date
@@ -24,7 +25,7 @@ class BillingFilter < ActiveRecord::Base
     value =~ /^\d{4}-\d{2}-\d{2}$/ && begin; value.to_date; rescue; false end
   end
 
-  def start_date_is_date    
+  def start_date_is_date
     return if start_date.nil?
     #errors.add("The start date is not a date.") unless is_date(start_date)
   end

@@ -15,14 +15,18 @@ class IssueBillingController < ApplicationController
     .includes(:time_entries) \
     .includes(:custom_values) \
     .where(:project_id => @project.id) \
-    .where(:issue_statuses => { :is_closed => true }) \
     .scoped
 
     @billing_filter = BillingFilter.new(params[:billing_filter])
 
     if @billing_filter.valid?
-      issues_scope = issues_scope.where("#{Issue.table_name}.created_on >= ?", @billing_filter.start_date).scoped unless @billing_filter.start_date.nil?
-      issues_scope = issues_scope.where("#{Issue.table_name}.created_on <= ?", @billing_filter.end_date).scoped unless @billing_filter.end_date.nil?
+      # create the time range object
+      time_range = @billing_filter.start_date..@billing_filter.end_date
+      issues_scope = issues_scope.where(:time_entries => { :spent_on => time_range }).scoped
+
+      if @billing_filter.closed
+        issues_scope = issues_scope.where(:issue_statuses => { :is_closed => true }).scoped
+      end
     end
 
     # get only the set trackers
@@ -81,12 +85,10 @@ class IssueBillingController < ApplicationController
 
         # set the raised by
         if is_setting_set?('ib_raised_by_id')
-          raised_by_text = i.custom_value_for(Setting.plugin_issue_billing['ib_raised_by_id']).value
-
-          if raised_by_text.blank? || raised_by_text.nil?
+          begin
+            i.raised_by = i.custom_value_for(Setting.plugin_issue_billing['ib_raised_by_id']).value.split(";").first.strip
+          rescue NoMethodError
             i.raised_by = i.author.to_s
-          else
-            i.raised_by = raised_by_text.split(";").first.strip
           end
         else
           i.raised_by = i.author.to_s
