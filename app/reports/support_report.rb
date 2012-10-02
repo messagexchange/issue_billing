@@ -36,8 +36,7 @@ class SupportReport < Prawn::Document
     font_size 6
     table(issues_array, :header => true, :width => (bounds.right - 1), :cell_style => { :border_width => 0, :inline_format => true }) do
       row(0).background_color = "CCCCCC"
-      cells.padding = 1
-
+      cells.padding = 2
     end
 
     page_string = "page <page> of <total>"
@@ -56,7 +55,7 @@ class SupportReport < Prawn::Document
       table = []
 
       # add the heading
-      table << ["<b>Id</b>", "<b>Subject</b>", "<b>Created date and time</b>", "<b>Raised by</b>", "<b>Actioned by</b>", "<b>Time spent (hours)</b>"]
+      table << ["<b>ID</b>", "<b>Subject</b>", "<b>Created date and time</b>", "<b>Raised by</b>", "<b>Actioned by</b>", "<b>Time spent (hours)</b>"]
 
       issues.each do |i|
         table << [i.id.to_s, i.subject, format_time(i.created_on), i.raised_by, (i.assigned_to.nil?) ? i.author.to_s : i.assigned_to.to_s, i.hours.to_s]
