@@ -8,8 +8,10 @@ class SupportReport < Prawn::Document
 
   def to_pdf(issues, project, total_hours, start_date, end_date)
 
-    image "#{IssueBilling::LOGO_URL}#{Setting.plugin_issue_billing['ib_logo_image']}", \
-          :height => 25, :vposition => :top, :position => :right
+    logo_height = Setting.plugin_issue_billing['ib_logo_height'].to_i || 30
+    logo = Setting.plugin_issue_billing['ib_logo_image'] || 'logo.png'
+
+    image "#{IssueBilling::LOGO_URL}#{logo}", { :height => logo_height, :vposition => :top, :position => :right }
 
     font_size(10) { text "<b>Support Log</b>", :inline_format => true }
 

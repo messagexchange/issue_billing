@@ -26,7 +26,8 @@ Redmine::Plugin.register :issue_billing do
     'ib_non_billable_activity_ids' => 0,
     'ib_raised_by_id' => 0,
     'ib_logo_image' => 'logo.png',
-    'ib_non_billable_custom_id' => 0
+    'ib_non_billable_custom_id' => 0,
+    'ib_logo_height' => 30
   }
 end
 
