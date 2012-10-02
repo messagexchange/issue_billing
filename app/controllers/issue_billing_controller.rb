@@ -81,7 +81,13 @@ class IssueBillingController < ApplicationController
 
         # set the raised by
         if is_setting_set?('ib_raised_by_id')
-          i.raised_by = i.custom_value_for(Setting.plugin_issue_billing['ib_raised_by_id']).value.split(";").first.strip
+          raised_by_text = i.custom_value_for(Setting.plugin_issue_billing['ib_raised_by_id']).value
+
+          if raised_by_text.blank? || raised_by_text.nil?
+            i.raised_by = i.author.to_s
+          else
+            i.raised_by = raised_by_text.split(";").first.strip
+          end
         else
           i.raised_by = i.author.to_s
         end
