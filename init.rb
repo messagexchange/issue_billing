@@ -14,7 +14,7 @@ Redmine::Plugin.register :issue_billing do
   # add billing menu option
   menu(
     :project_menu,
-    :billing,
+    :issue_billing,
     { :controller => 'issue_billing', :action => 'issues' },
     :caption => 'Billing',
     :before => :settings
