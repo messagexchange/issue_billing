@@ -17,6 +17,9 @@ module IssueBillingHelper
   end
 
   def get_billable_hours(hours)
+    # make sure to return 0 if there are no hours
+    return 0 if hours == 0
+
     # if the amount of time is less than 0.5 (half hour) bill 0.5
     return 0.5 if hours <= 0.5
 
