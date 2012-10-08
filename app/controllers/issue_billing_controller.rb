@@ -34,7 +34,7 @@ class IssueBillingController < ApplicationController
       issues_scope = issues_scope.where(:tracker_id => Setting.plugin_issue_billing['ib_tracker_id']).scoped
     end
 
-    @activities = (is_setting_set?('ib_non_billable_activity_ids')) ? [] : Setting.plugin_issue_billing['ib_non_billable_activity_ids'].to_s.split(";")
+    @activities = (is_setting_set?('ib_non_billable_activity_ids')) ? Setting.plugin_issue_billing['ib_non_billable_activity_ids'].to_s.split(";") : []
 
     @issues = build_issues_list(issues_scope.all)
 
@@ -60,11 +60,15 @@ class IssueBillingController < ApplicationController
     end
 
     def build_issues_list(issues)
+      Rails.logger.debug "Building issues..."
+      Rails.logger.debug "Activities to not bill are: #{@activities.join(", ")}"
+
       # remove issues marked as non-billable
       issues.delete_if { |i| !i.custom_value_for(Setting.plugin_issue_billing['ib_non_billable_custom_id'].to_i).nil? \
         && i.custom_value_for(Setting.plugin_issue_billing['ib_non_billable_custom_id'].to_i).value == "1" }
 
       issues.map! do |i|
+        Rails.logger.debug "Building issue #{i.id}"
         # dynamically give it an hours property and raised by
         i.class.module_eval do
           attr_accessor :hours
@@ -73,7 +77,9 @@ class IssueBillingController < ApplicationController
 
         # sum all the hours
         i.hours = i.time_entries.inject(0) do |sum, t|
-          if @activities.include? t.id.to_s
+          Rails.logger.debug "Summing time entries, calculating #{t.id}"
+          if @activities.include? t.activity_id.to_s
+            Rails.logger.debug "Time entry #{t.id.to_s} with activity #{t.activity_id.to_s} is in the activities ignore array."
             sum
           else
             sum + t.hours
