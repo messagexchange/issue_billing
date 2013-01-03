@@ -4,7 +4,7 @@ Redmine::Plugin.register :issue_billing do
   name 'Issue Billing plugin'
   author 'Paul Van de Vreede'
   description 'Create billing report from issue time entries.'
-  version '0.8.0'
+  version '0.8.1'
   url 'https://github.com/messagexchange/issue_billing'
   author_url 'https://github.com/messagexchange'
 
