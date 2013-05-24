@@ -19,8 +19,8 @@
 </p>
 
 <p>
-  <label for="ib_logo_image">PDF logo filename (must be in &lt;plugin dir&gt;/logos/</label>
-  <%= text_field_tag 'settings[ib_logo_image]', @settings['ib_logo_image'] %>
+  <label for="ib_logo_image">PDF logo path (must be an absolute path)</label>
+  <%= text_field_tag 'settings[ib_logo_image]', @settings['ib_logo_image'], :style => 'width: 90%' %>
 </p>
 
 <p>
