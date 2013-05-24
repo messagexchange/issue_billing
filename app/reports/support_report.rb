@@ -9,9 +9,8 @@ class SupportReport < Prawn::Document
   def to_pdf(issues, project, total_hours, start_date, end_date)
 
     logo_height = Setting.plugin_issue_billing['ib_logo_height'].to_i || 30
-    logo = Setting.plugin_issue_billing['ib_logo_image'] || 'logo.png'
 
-    image "#{IssueBilling::LOGO_URL}#{logo}", { :height => logo_height, :vposition => :top, :position => :right }
+    image logo_url, { :height => logo_height, :vposition => :top, :position => :right }
 
     font_size(10) { text "<b>Support Log</b>", :inline_format => true }
 
@@ -51,19 +50,31 @@ class SupportReport < Prawn::Document
   end
 
   private
-    def create_issues_table(issues, total_hours)
-      table = []
 
-      # add the heading
-      table << ["<b>ID</b>", "<b>Subject</b>", "<b>Created date and time</b>", "<b>Raised by</b>", "<b>Actioned by</b>", "<b>Time spent (hours)</b>"]
+  def create_issues_table(issues, total_hours)
+    table = []
 
-      issues.each do |i|
-        table << [i.id.to_s, i.subject, format_time(i.created_on), i.raised_by, (i.assigned_to.nil?) ? i.author.to_s : i.assigned_to.to_s, i.hours.to_s]
-      end
+    # add the heading
+    table << ["<b>ID</b>", "<b>Subject</b>", "<b>Created date and time</b>", "<b>Raised by</b>", "<b>Actioned by</b>", "<b>Time spent (hours)</b>"]
 
-      # Add footer with total hours
-      table << ["", "", "", "", "", "<b>#{total_hours.to_s}</b>"]
-
-      table
+    issues.each do |i|
+      table << [i.id.to_s, i.subject, format_time(i.created_on), i.raised_by, (i.assigned_to.nil?) ? i.author.to_s : i.assigned_to.to_s, i.hours.to_s]
     end
+
+    # Add footer with total hours
+    table << ["", "", "", "", "", "<b>#{total_hours.to_s}</b>"]
+
+    table
+  end
+
+  def logo_url
+    file = Setting.plugin_issue_billing['ib_logo_image']
+
+    if File.exists?(file)
+      file
+    else
+      File.join(File.expand_path('../../../', __FILE__), 'logos', 'logo.png')
+    end
+  end
+
 end

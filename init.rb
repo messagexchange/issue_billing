@@ -25,15 +25,9 @@ Redmine::Plugin.register :issue_billing do
     'ib_tracker_id' => 0,
     'ib_non_billable_activity_ids' => 0,
     'ib_raised_by_id' => 0,
-    'ib_logo_image' => 'logo.png',
+    'ib_logo_image' => File.join(File.expand_path('../', __FILE__), 'logos', 'logo.png'),
     'ib_non_billable_custom_id' => 0,
     'ib_logo_height' => 30
   }
 end
-
-# set logo url constant
-module IssueBilling
-  LOGO_URL = "#{File.expand_path(File.dirname(__FILE__))}/logos/"
-end
-
 
